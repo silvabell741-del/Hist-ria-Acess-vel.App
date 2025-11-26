@@ -98,22 +98,21 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'História Acessível',
-        short_name: 'HistAcess',
-        description: 'Plataforma de ensino de História inclusiva e acessível para todos os estudantes.',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
-        display: 'standalone',
-        // display_override: Garante fallback elegante se standalone não for suportado
-        display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
-        orientation: 'any',
-        scope: 'https://hist-ria-acess-vel-app.pages.dev/',
-        start_url: 'https://hist-ria-acess-vel-app.pages.dev/',
-        id: 'https://hist-ria-acess-vel-app.pages.dev/',
-        categories: ['education', 'productivity', 'reference'],
-        lang: 'pt-BR',
-        dir: 'ltr',
-        prefer_related_applications: false,
+  name: 'História Acessível',
+  short_name: 'HistAcess',
+  description: 'Plataforma de ensino de História inclusiva e acessível para todos os estudantes.',
+  theme_color: '#0f172a',
+  background_color: '#0f172a',
+  display: 'standalone',
+  display_override: ['standalone', 'minimal-ui'],
+  scope: '/',
+  start_url: '/',
+  id: '/',
+  categories: ['education', 'productivity', 'reference'],
+  lang: 'pt-BR',
+  dir: 'ltr',
+  prefer_related_applications: false,
+}
         // launch_handler: Impede múltiplas instâncias do app abertas
         launch_handler: {
             client_mode: "navigate-existing"
