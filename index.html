@@ -1,0 +1,1393 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="História contada de forma simples e acessível para todos. Plataforma inclusiva de ensino.">
+    
+    <!-- PWA & iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HistAcess">
+    <meta name="application-name" content="História Acessível">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <title>História Acessível</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Força o Tailwind a usar o modo de classe, ignorando as preferências do sistema operacional.
+        // Isso corrige o problema do tema claro não ser aplicado quando o SO está em modo escuro.
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        scifi: ['Orbitron', 'sans-serif'],
+                        epic: ['Cinzel', 'serif'],
+                        japanese: ['Sawarabi Mincho', 'serif'],
+                        modern: ['Space Grotesk', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^6.25.1",
+    "react-router": "https://aistudiocdn.com/react-router@^6.25.1",
+    "firebase/app": "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js",
+    "firebase/storage": "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
+    "vite-plugin-pwa": "https://aistudiocdn.com/vite-plugin-pwa@^1.1.0",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "@vitejs/plugin-react-swc": "https://aistudiocdn.com/@vitejs/plugin-react-swc@^4.2.2",
+    "idb-keyval": "https://aistudiocdn.com/idb-keyval@^6.2.1"
+  }
+}
+</script>
+<style>
+    :root {
+        --root-font-size: 16px;
+    }
+    html {
+        font-size: var(--root-font-size);
+    }
+    body {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        font-family: 'Outfit', sans-serif;
+    }
+    img, video, iframe {
+       max-width: 100%;
+       height: auto;
+       display: block;
+    }
+
+    /* --- Responsive & Fluid Layout Additions --- */
+    
+    .prose h1 {
+        font-size: clamp(1.5rem, 5vw, 2.25rem);
+        line-height: 1.2;
+    }
+    .prose h2 {
+        font-size: clamp(1.25rem, 4vw, 1.875rem);
+        line-height: 1.2;
+    }
+    .prose h3 {
+        font-size: clamp(1.125rem, 3vw, 1.5rem);
+        line-height: 1.3;
+    }
+    
+    .prose p, .prose li {
+        font-size: clamp(1rem, 2.5vw, 1.125rem);
+    }
+    
+    .responsive-stat-value {
+        font-size: clamp(1.875rem, 5vw, 2.25rem) !important;
+    }
+
+    main p.text-sm, main p.text-xs {
+        font-size: inherit;
+    }
+
+    /* --- Accessibility: Enhanced Visible Focus --- */
+    :focus-visible {
+        outline: 2px solid #6366f1; 
+        outline-offset: 1px;
+    }
+    .high-contrast :focus-visible {
+        outline-color: #ffff00; 
+    }
+
+
+    /* High Contrast Theme Overrides */
+    .high-contrast body, .high-contrast #root {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+    .high-contrast .hc-bg-override {
+        background: #000 !important;
+        border: 1px solid #ffff00 !important;
+    }
+     .high-contrast .hc-text-override,
+     .high-contrast .hc-text-primary,
+     .high-contrast .hc-text-secondary {
+        color: #fff !important;
+    }
+    .high-contrast .hc-border-override {
+        border-color: #ffff00 !important;
+    }
+    .high-contrast .hc-button-override {
+        background-color: transparent !important;
+        border: 1px solid #fff !important;
+        color: #fff !important;
+    }
+    .high-contrast .hc-button-override:hover:not([disabled]) {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+    .high-contrast .hc-button-primary-override {
+        background-color: #ffff00 !important;
+        color: #000 !important;
+        border-color: #ffff00 !important;
+    }
+    .high-contrast .hc-button-primary-override:hover:not([disabled]) {
+        background-color: #fff !important;
+        color: #000 !important;
+        border-color: #fff !important;
+    }
+    .high-contrast button:disabled {
+        opacity: 0.6 !important;
+        border-color: #888 !important;
+        color: #888 !important;
+    }
+    .high-contrast input, .high-contrast select, .high-contrast textarea {
+        background-color: #111 !important;
+        color: #fff !important;
+        border: 1px solid #fff !important;
+    }
+    .high-contrast .hc-link-override {
+        color: #00ffff !important;
+        text-decoration: underline;
+    }
+    .high-contrast [class*="shadow-"] { box-shadow: none !important; }
+    .high-contrast .bg-gradient-to-r, .high-contrast .bg-gradient-to-br { background: #000 !important; border: 1px solid #ffff00; }
+
+    /* High Contrast Text Option Overrides */
+    .high-contrast-text .text-slate-900,
+    .high-contrast-text .text-slate-800,
+    .high-contrast-text .text-gray-800,
+    .high-contrast-text .text-indigo-900,
+    .high-contrast-text .text-blue-800,
+    .high-contrast-text .text-green-800,
+    .high-contrast-text .text-yellow-900,
+    .high-contrast-text .text-slate-700 { 
+        color: #000 !important; 
+        font-weight: 700 !important;
+    }
+
+    .high-contrast-text .text-slate-600,
+    .high-contrast-text .text-slate-500,
+    .high-contrast-text .text-gray-500 { 
+        color: #1a1a1a !important; 
+        font-weight: 700 !important;
+    }
+    
+    .dark.high-contrast-text .dark\:text-slate-100,
+    .dark.high-contrast-text .dark\:text-slate-200,
+    .dark.high-contrast-text .dark\:text-indigo-200,
+    .dark.high-contrast-text .dark\:text-blue-200,
+    .dark.high-contrast-text .dark\:text-green-300,
+    .dark.high-contrast-text .dark\:text-yellow-200,
+    .dark.high-contrast-text .dark\:text-white { 
+        color: #FFF !important; 
+        font-weight: 700 !important;
+    }
+
+    .dark.high-contrast-text .dark\:text-slate-300,
+    .dark.high-contrast-text .dark\:text-slate-400,
+    .dark.high-contrast-text .dark\:text-gray-400 { 
+        color: #e0e0e0 !important; 
+        font-weight: 700 !important;
+    }
+
+    /* --- MN Theme --- */
+    .mn body, .mn #root, .mn .bg-slate-100, .mn .dark\:bg-slate-900 {
+        background-color: #1a1a1a; 
+        color: #f0f0f0; 
+    }
+    .mn .bg-white, .mn .dark\:bg-slate-800 { background-color: #2c2c2c; } 
+    .mn .border-slate-200, .mn .dark\:border-slate-700, .mn .border-slate-300, .mn .dark\:border-slate-600 { border-color: #4a4a4a; }
+    .mn .text-slate-900, .mn .dark\:text-slate-100, .mn .text-slate-800, .mn .dark\:text-slate-200, .mn .text-slate-700 { color: #f0f0f0; }
+    .mn .text-slate-600, .mn .dark\:text-slate-300, .mn .text-slate-500, .mn .dark\:text-slate-400 { color: #a0a0a0; }
+    .mn .hover\:bg-slate-50:hover, .mn .dark\:hover\:bg-slate-700:hover, .mn .hover\:bg-slate-200:hover { background-color: #3d3d3d; }
+    .mn .bg-slate-50, .mn .dark\:bg-slate-700\/50, .mn .bg-slate-100, .mn .dark\:bg-slate-700 { background-color: #383838; }
+    
+    .mn .bg-blue-950, .mn .dark\:bg-slate-900.hc-bg-override { background-color: #212121; }
+    .mn .text-slate-200, .mn .text-slate-300 { color: #e0e0e0; }
+    .mn .border-blue-900, .mn .dark\:border-slate-800 { border-color: #333; }
+    .mn .hover\:bg-blue-900:hover, .mn .dark\:hover\:bg-white\/10:hover { background-color: #333; }
+    .mn .bg-blue-800, .mn .dark\:bg-indigo-500 { background-image: linear-gradient(to right, #e53e3e, #ed8936); color: #fff; }
+
+    .mn .bg-white\/80, .mn .dark\:bg-slate-900\/80 { background-color: rgba(26, 26, 26, 0.8); }
+    .mn .text-indigo-600, .mn .dark\:text-indigo-400 { color: #48bb78; } 
+    .mn .hover\:text-indigo-500:hover, .mn .dark\:hover\:text-indigo-300:hover { color: #68d391; }
+    .mn .bg-indigo-100, .mn .bg-indigo-200, .mn .dark\:bg-indigo-500\/20, .mn .dark\:bg-indigo-500\/30 { background-color: rgba(72, 187, 120, 0.1); color: #48bb78; }
+    .mn .hover\:bg-indigo-200:hover, .mn .hover\:bg-indigo-300:hover, .mn .dark\:hover\:bg-indigo-500\/30:hover, .mn .dark\:hover\:bg-indigo-500\/40:hover { background-color: rgba(72, 187, 120, 0.2); }
+    .mn .focus-visible\:ring-indigo-500:focus-visible { --tw-ring-color: #48bb78; }
+    
+    .mn .bg-slate-800, .mn .dark\:bg-indigo-600 { background-color: #3c3c3c; } 
+    .mn .hover\:bg-slate-900:hover, .mn .dark\:hover\:bg-indigo-700:hover { background-color: #4d4d4d; }
+    
+    .mn .bg-gradient-to-r.from-blue-500.to-teal-400, .mn .bg-gradient-to-r.from-indigo-500.to-purple-500 { background-image: linear-gradient(to right, #c53030, #dd6b20); color: #fff; }
+    .mn .bg-gradient-to-r.from-blue-500.to-green-400 { background-image: linear-gradient(to right, #e53e3e, #ed8936); color: #fff; }
+    .mn .bg-gradient-to-br.from-yellow-50 { background-image: linear-gradient(to bottom right, #2c2c2c, #383838); }
+    .mn .text-yellow-600, .mn .dark\:text-yellow-400 { color: #f6e05e; }
+    .mn .bg-gradient-to-r.from-yellow-400.to-orange-500 { background-image: linear-gradient(to right, #f6e05e, #ed8936); }
+    .mn .bg-indigo-50, .mn .dark\:bg-indigo-500\/10 { background-color: rgba(72, 187, 120, 0.05); }
+    .mn .border-indigo-400, .mn .dark\:border-indigo-500 { border-color: #48bb78; }
+    .mn .bg-green-100 { background-color: rgba(72, 187, 120, 0.1); }
+    .mn .text-green-800 { color: #68d391; }
+    .mn .bg-yellow-100 { background-color: rgba(246, 224, 94, 0.1); }
+    .mn .text-yellow-800 { color: #faf089; }
+
+    /* --- Soberania Esmeralda Theme --- */
+    .emerald-sovereignty body,
+    .emerald-sovereignty #root,
+    .emerald-sovereignty .bg-slate-100,
+    .emerald-sovereignty .dark\:bg-slate-900 {
+        background-color: #020403 !important;
+        background-image: radial-gradient(circle at 50% 100%, #064E3B 0%, #020403 60%) !important; 
+        color: #E5E7EB !important; 
+    }
+
+    .emerald-sovereignty h1, 
+    .emerald-sovereignty h2, 
+    .emerald-sovereignty h3,
+    .emerald-sovereignty aside,
+    .emerald-sovereignty header {
+        font-family: 'Cinzel', serif !important;
+        letter-spacing: 0.02em;
+        font-weight: 700;
+    }
+    
+    .emerald-sovereignty p,
+    .emerald-sovereignty span,
+    .emerald-sovereignty div,
+    .emerald-sovereignty button {
+        font-family: 'Outfit', sans-serif;
+    }
+    
+    .emerald-sovereignty aside,
+    .emerald-sovereignty .bg-blue-950 {
+        background-color: #064E3B !important; 
+        background-image: none !important; 
+        border-right: 8px solid #000000 !important; 
+        box-shadow: none !important; 
+    }
+    
+    .emerald-sovereignty aside nav > button {
+        margin-bottom: 0.75rem !important;
+        padding-top: 0.85rem !important;
+        padding-bottom: 0.85rem !important;
+        border: 1px solid transparent;
+    }
+    
+    .emerald-sovereignty aside .text-slate-200,
+    .emerald-sovereignty aside .text-slate-300,
+    .emerald-sovereignty aside button {
+        color: #E5E7EB !important; 
+        text-shadow: 1px 1px 0 #000;
+        font-family: 'Cinzel', serif !important; 
+        font-size: 1.05em;
+    }
+
+    .emerald-sovereignty .bg-blue-800 { 
+        background: #000000 !important; 
+        border-left: 4px solid #E53935 !important; 
+        border-right: 4px solid #E53935 !important; 
+        color: #34D399 !important; 
+        box-shadow: 0 0 15px rgba(0,0,0,0.7) !important;
+    }
+
+    .emerald-sovereignty button[aria-label="Abrir menu"] {
+        background: #000000 !important; 
+        border: 2px solid #34D399 !important; 
+        border-radius: 50% !important; 
+        color: #E53935 !important; 
+        box-shadow: 0 0 0 4px #064E3B, 0 0 15px #000 !important; 
+        width: 56px !important;
+        height: 56px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+    }
+    
+    .emerald-sovereignty .bg-white,
+    .emerald-sovereignty .dark\:bg-slate-800 {
+        background-color: #182028 !important; 
+        border: 1px solid #606a70 !important; 
+        color: #F3F4F6 !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.5) !important; 
+    }
+    
+    .emerald-sovereignty .bg-white:hover,
+    .emerald-sovereignty .dark\:bg-slate-800:hover {
+        border-color: #34D399 !important; 
+        box-shadow: 0 0 20px rgba(52, 211, 153, 0.4) !important;
+    }
+
+    .emerald-sovereignty input,
+    .emerald-sovereignty select,
+    .emerald-sovereignty textarea {
+        background-color: #000000 !important;
+        border: 1px solid #374151 !important;
+        color: #FFFFFF !important;
+    }
+
+    .emerald-sovereignty header {
+        background-color: #020403 !important; 
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+    
+    .emerald-sovereignty h1, 
+    .emerald-sovereignty h2, 
+    .emerald-sovereignty h3,
+    .emerald-sovereignty .text-slate-900,
+    .emerald-sovereignty .text-slate-800,
+    .emerald-sovereignty .dark\:text-slate-100 {
+        color: #FFFFFF !important;
+        text-transform: uppercase;
+    }
+    
+    .emerald-sovereignty .text-slate-600,
+    .emerald-sovereignty .text-slate-500 {
+        color: #9CA3AF !important; 
+    }
+
+    .emerald-sovereignty .bg-indigo-600,
+    .emerald-sovereignty .bg-blue-600,
+    .emerald-sovereignty .dark\:bg-indigo-600 {
+        background-image: linear-gradient(90deg, #059669 0%, #34D399 100%) !important; 
+        border: 1px solid #047857 !important;
+        color: #000000 !important; 
+        font-weight: 800 !important;
+        box-shadow: 0 0 10px rgba(52, 211, 153, 0.6) !important;
+    }
+    
+    .emerald-sovereignty .bg-indigo-600:hover,
+    .emerald-sovereignty .dark\:bg-indigo-600:hover {
+        box-shadow: 0 0 20px rgba(52, 211, 153, 0.8) !important;
+    }
+
+    .emerald-sovereignty .bg-indigo-100,
+    .emerald-sovereignty .bg-blue-100,
+    .emerald-sovereignty .bg-slate-100 {
+        background-color: #374151 !important; 
+        color: #D4AF37 !important; 
+        border: 1px solid #4B5563 !important;
+    }
+
+    .emerald-sovereignty .bg-indigo-200 {
+        background-color: #000000 !important;
+        color: #34D399 !important;
+        border: 1px solid #34D399 !important;
+        box-shadow: 0 0 5px rgba(52, 211, 153, 0.3);
+    }
+    .emerald-sovereignty .bg-indigo-200:hover {
+        background-color: #064E3B !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
+    }
+
+    .emerald-sovereignty .text-indigo-600,
+    .emerald-sovereignty .text-blue-600,
+    .emerald-sovereignty .dark\:text-indigo-400 {
+        color: #34D399 !important;
+    }
+
+    .emerald-sovereignty .border-slate-200,
+    .emerald-sovereignty .border-slate-300,
+    .emerald-sovereignty .dark\:border-slate-700 {
+        border-color: #4B5563 !important; 
+    }
+
+    .emerald-sovereignty .text-yellow-600,
+    .emerald-sovereignty .text-amber-600,
+    .emerald-sovereignty .dark\:text-yellow-400 {
+        color: #D4AF37 !important;
+    }
+    
+    .emerald-sovereignty .bg-gradient-to-r.from-blue-500.to-teal-400 {
+        background-image: linear-gradient(to right, #064E3B, #1F2937) !important;
+        border: 2px solid #D4AF37 !important;
+    }
+
+    /* --- Aurora Galática --- */
+    .galactic-aurora body,
+    .galactic-aurora #root,
+    .galactic-aurora .bg-slate-100,
+    .galactic-aurora .dark\:bg-slate-900 {
+        background-color: #0F1014 !important; 
+        color: #FFFFFF !important;
+    }
+
+    .galactic-aurora aside {
+        background-color: #0F1014 !important;
+        border-right: 1px solid #2E2F3E !important;
+        background-image: none !important;
+    }
+    
+    .galactic-aurora aside, 
+    .galactic-aurora header h1,
+    .galactic-aurora h1,
+    .galactic-aurora h2,
+    .galactic-aurora h3 {
+        font-family: 'Orbitron', sans-serif !important;
+        letter-spacing: 0.05em;
+    }
+    
+    .galactic-aurora p, 
+    .galactic-aurora input,
+    .galactic-aurora textarea,
+    .galactic-aurora select,
+    .galactic-aurora .prose {
+        font-family: 'Outfit', sans-serif !important;
+        letter-spacing: normal;
+    }
+
+    .galactic-aurora .bg-white,
+    .galactic-aurora .dark\:bg-slate-800 {
+        background-color: #181920 !important;
+        border: 1px solid #2E2F3E !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 20px -1px rgba(0, 85, 255, 0.1) !important; 
+    }
+
+    .galactic-aurora input,
+    .galactic-aurora select,
+    .galactic-aurora textarea {
+        background-color: #0F1014 !important;
+        border-color: #2E2F3E !important;
+        color: #FFFFFF !important;
+    }
+
+    .galactic-aurora .text-slate-900,
+    .galactic-aurora .text-slate-800,
+    .galactic-aurora .text-slate-700,
+    .galactic-aurora .text-gray-700,
+    .galactic-aurora .dark\:text-slate-100,
+    .galactic-aurora .dark\:text-slate-200 {
+        color: #FFFFFF !important;
+    }
+    .galactic-aurora .text-slate-600,
+    .galactic-aurora .text-slate-500 {
+        color: #A0A0A0 !important;
+    }
+
+    .galactic-aurora .bg-indigo-600,
+    .galactic-aurora .bg-blue-600,
+    .galactic-aurora .dark\:bg-indigo-600 {
+        background-image: linear-gradient(135deg, #D90429 0%, #0055FF 100%) !important;
+        border: none !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 0 10px rgba(217, 4, 41, 0.4) !important; 
+    }
+    
+    .galactic-aurora .bg-indigo-600:hover,
+    .galactic-aurora .dark\:bg-indigo-600:hover {
+        opacity: 0.9;
+    }
+
+    .galactic-aurora .bg-green-600 {
+        background-image: linear-gradient(90deg, #00F5A0 0%, #00D9F5 100%) !important; 
+        background-color: transparent !important;
+        color: #000000 !important; 
+        border: none !important;
+        box-shadow: 0 0 15px rgba(0, 245, 160, 0.4) !important;
+    }
+    .galactic-aurora .bg-green-600:hover {
+        opacity: 0.9;
+        box-shadow: 0 0 25px rgba(0, 245, 160, 0.6) !important;
+    }
+
+    .galactic-aurora .bg-amber-100,
+    .galactic-aurora .bg-yellow-100 {
+        background-color: rgba(255, 170, 0, 0.1) !important;
+        border: 1px solid #FFD700 !important; 
+        color: #FFD700 !important;
+    }
+    .galactic-aurora .text-amber-900,
+    .galactic-aurora .text-yellow-800 {
+        color: #FFD700 !important;
+    }
+
+    .galactic-aurora .bg-indigo-100,
+    .galactic-aurora .bg-blue-100,
+    .galactic-aurora .bg-slate-100 {
+        background-color: #2A2A2A !important;
+        color: #4CC9F0 !important; 
+        border: 1px solid #3A3A3A !important;
+    }
+
+    .galactic-aurora .text-indigo-600,
+    .galactic-aurora .text-blue-600,
+    .galactic-aurora .dark\:text-indigo-400 {
+        color: #4CC9F0 !important;
+    }
+
+    .galactic-aurora .bg-blue-800 {
+        background: rgba(217, 4, 41, 0.1) !important; 
+        border-left: 4px solid #D90429 !important; 
+        color: #FFFFFF !important;
+    }
+
+    .galactic-aurora header {
+        background-color: #0F1014 !important;
+        border-bottom-color: #2E2F3E !important;
+    }
+    
+    .galactic-aurora .bg-gradient-to-r.from-blue-500.to-teal-400 {
+        background-image: linear-gradient(to right, #D90429, #0055FF) !important;
+        border: 1px solid #2E2F3E !important;
+    }
+    
+    .galactic-aurora .border-slate-200,
+    .galactic-aurora .border-slate-300,
+    .galactic-aurora .dark\:border-slate-700 {
+        border-color: #2E2F3E !important;
+    }
+
+    .galactic-aurora button[aria-label="Abrir menu"] {
+        background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%) !important; 
+        border: 2px solid #2563eb !important; 
+        border-bottom: 4px solid #1d4ed8 !important;
+        border-radius: 24px 24px 8px 8px !important; 
+        color: #1e3a8a !important; 
+        box-shadow: 0 0 15px rgba(37, 99, 235, 0.5) !important;
+        width: 48px !important;
+        height: 48px !important;
+        padding-top: 12px !important; 
+        position: fixed;
+    }
+    
+    .galactic-aurora button[aria-label="Abrir menu"]::before {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 8px;
+        background-color: #dc2626; 
+        border-radius: 50%;
+        box-shadow: 0 0 5px #ef4444;
+        border: 1px solid #991b1b;
+    }
+
+    .galactic-aurora button[aria-label="Abrir menu"]::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 6px;
+        height: 6px;
+        background-color: #3b82f6; 
+        border-radius: 50%;
+        opacity: 0.8;
+    }
+
+    .galactic-aurora .bg-emerald-50\/50,
+    .galactic-aurora .bg-emerald-50 {
+        background-color: rgba(0, 85, 255, 0.1) !important; 
+        border-bottom: 1px solid #2E2F3E !important;
+    }
+    
+    .galactic-aurora .bg-slate-100\/60,
+    .galactic-aurora .bg-slate-100 {
+        background-color: #13141A !important;
+        border-top: 1px solid #2E2F3E !important;
+        border-bottom: 1px solid #2E2F3E !important;
+    }
+    
+    .galactic-aurora .bg-slate-50 {
+        background-color: #1A1B22 !important;
+        border-color: #2E2F3E !important;
+    }
+    .galactic-aurora .bg-slate-50:hover {
+        background-color: #252630 !important;
+        border-color: #4CC9F0 !important; 
+    }
+    
+    .galactic-aurora .bg-slate-200\/70,
+    .galactic-aurora .bg-slate-200 {
+        background-color: #2E2F3E !important;
+        color: #4CC9F0 !important;
+        border: 1px solid #4CC9F0 !important;
+    }
+    
+    .galactic-aurora .bg-blue-100 {
+        background-color: #2E2F3E !important;
+        color: #4CC9F0 !important;
+    }
+    
+    .galactic-aurora .text-slate-500 {
+        color: #888888 !important;
+    }
+    .galactic-aurora button[aria-selected="true"] .text-indigo-600 {
+        color: #4CC9F0 !important;
+    }
+    .galactic-aurora .border-indigo-500 {
+        border-color: #4CC9F0 !important;
+    }
+
+    .galactic-aurora .bg-slate-50\/50 {
+        background-color: rgba(26, 27, 34, 0.5) !important; 
+        border: 1px solid #2E2F3E !important;
+    }
+    
+    .galactic-aurora .hover\:bg-slate-50:hover {
+        background-color: #2E2F3E !important;
+        color: #4CC9F0 !important;
+    }
+
+    /* Aurora Achievements Fixes */
+    .galactic-aurora .bg-gradient-to-br.from-yellow-50 {
+        background-image: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%) !important;
+        background-color: #0F1014 !important;
+        border: 1px solid #FFD700 !important;
+    }
+    .galactic-aurora .bg-white\/60 {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    .galactic-aurora .text-yellow-600, .galactic-aurora .text-yellow-700 {
+        color: #FFD700 !important;
+    }
+    .galactic-aurora .bg-green-50 {
+        background-color: rgba(0, 245, 160, 0.1) !important;
+        border-color: #00F5A0 !important;
+        color: #FFFFFF !important;
+    }
+    .galactic-aurora .text-green-800, .galactic-aurora .text-green-700 {
+        color: #00F5A0 !important;
+    }
+    .galactic-aurora .bg-green-100 {
+        background-color: rgba(0, 245, 160, 0.2) !important;
+        color: #00F5A0 !important;
+    }
+
+    /* --- Dragon Year Theme --- */
+    .dragon-year body,
+    .dragon-year #root,
+    .dragon-year .bg-gray-100,
+    .dragon-year .bg-slate-100,
+    .dragon-year .dark\:bg-slate-900 {
+        background: radial-gradient(circle, #fdfbf7 0%, #f3e5ca 100%),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E") !important;
+        background-blend-mode: multiply;
+        color: #3E2723 !important; 
+    }
+
+    .dragon-year aside,
+    .dragon-year .bg-blue-950 {
+        background-color: #5D0E0E !important; 
+        border-right: 1px solid #8D6E63 !important; 
+        background-image: none !important;
+    }
+    
+    .dragon-year aside,
+    .dragon-year aside .text-slate-200,
+    .dragon-year aside .text-slate-300,
+    .dragon-year aside button,
+    .dragon-year aside span,
+    .dragon-year aside svg,
+    .dragon-year aside h1, 
+    .dragon-year aside p {
+        color: #FFD700 !important; 
+    }
+    
+    .dragon-year .bg-blue-800 {
+        background-color: #FFF8E7 !important;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E") !important;
+        color: #3E2723 !important; 
+        border-left: 4px solid #FFD700 !important; 
+    }
+    
+    .dragon-year aside .bg-blue-800,
+    .dragon-year aside .bg-blue-800 span,
+    .dragon-year aside .bg-blue-800 svg {
+        color: #3E2723 !important; 
+    }
+    
+    .dragon-year aside .hover\:bg-blue-900:hover {
+        background-color: #7F1D1D !important; 
+    }
+
+    .dragon-year button[aria-label="Abrir menu"] {
+        background-color: #B71C1C !important; 
+        color: #FFD700 !important; 
+        border: 2px solid #FFD700 !important;
+        border-radius: 12px 12px 20px 20px !important; 
+        box-shadow: 0 0 10px rgba(183, 28, 28, 0.6), inset 0 0 10px rgba(0,0,0,0.2) !important;
+        position: fixed; 
+    }
+    .dragon-year button[aria-label="Abrir menu"]::after {
+        content: '';
+        display: block;
+        width: 4px;
+        height: 12px;
+        background-color: #FFD700;
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 0 0 2px 2px;
+    }
+
+    .dragon-year header {
+        background-color: #5D0E0E !important; 
+        border-bottom: 1px solid #8D6E63 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+    }
+
+    .dragon-year header h1,
+    .dragon-year header .text-slate-800,
+    .dragon-year header .dark\:text-slate-100,
+    .dragon-year header .hc-text-override {
+        color: #FFD700 !important; 
+    }
+
+    .dragon-year header button,
+    .dragon-year header .text-slate-500,
+    .dragon-year header .text-slate-700,
+    .dragon-year header .text-slate-600,
+    .dragon-year header .dark\:text-slate-400,
+    .dragon-year header .dark\:text-slate-200 {
+        color: #F0E6D2 !important; 
+    }
+    
+    .dragon-year header button:hover {
+        background-color: #7F1D1D !important;
+        color: #FFFFFF !important;
+    }
+    
+    .dragon-year header .bg-slate-100\/80 {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-color: #8D6E63 !important;
+    }
+
+    .dragon-year .bg-white,
+    .dragon-year .dark\:bg-slate-800 {
+        background-color: #FFF8E7 !important; 
+        border: 1px solid #D7CCC8 !important;
+        color: #3E2723 !important;
+        box-shadow: 0 4px 6px -1px rgba(93, 14, 14, 0.1), 0 2px 4px -1px rgba(93, 14, 14, 0.06) !important;
+    }
+
+    .dragon-year input,
+    .dragon-year select,
+    .dragon-year textarea {
+        background-color: #FFFBF0 !important;
+        border: 1px solid #8D6E63 !important;
+        color: #3E2723 !important;
+    }
+
+    .dragon-year .text-slate-900,
+    .dragon-year .text-slate-800,
+    .dragon-year .text-slate-700,
+    .dragon-year .dark\:text-slate-100,
+    .dragon-year .dark\:text-slate-200 {
+        color: #3E2723 !important; 
+    }
+    .dragon-year .text-slate-600,
+    .dragon-year .text-slate-500,
+    .dragon-year .dark\:text-slate-300,
+    .dragon-year .dark\:text-slate-400 {
+        color: #5D4037 !important; 
+    }
+
+    .dragon-year .bg-indigo-600,
+    .dragon-year .bg-blue-600,
+    .dragon-year .dark\:bg-indigo-600 {
+        background-image: linear-gradient(to right, #B71C1C, #D32F2F) !important; 
+        border: 1px solid #B71C1C !important;
+        color: #FFF8E7 !important;
+        box-shadow: 0 2px 4px rgba(183, 28, 28, 0.3) !important;
+    }
+    
+    .dragon-year .bg-indigo-600:hover,
+    .dragon-year .dark\:bg-indigo-600:hover {
+        background-image: linear-gradient(to right, #C62828, #E53935) !important;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important; 
+    }
+
+    .dragon-year .bg-green-600,
+    .dragon-year .bg-emerald-600 {
+        background-image: linear-gradient(to right, #2E7D32, #66BB6A) !important; 
+        border: 1px solid #1B5E20 !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 2px 4px rgba(46, 125, 50, 0.3) !important;
+    }
+    .dragon-year .bg-green-600:hover,
+    .dragon-year .bg-emerald-600:hover {
+        background-image: linear-gradient(to right, #388E3C, #81C784) !important;
+    }
+
+    .dragon-year .bg-indigo-100,
+    .dragon-year .bg-blue-100,
+    .dragon-year .bg-slate-100 {
+        background-color: #D7CCC8 !important; 
+        color: #5D0E0E !important; 
+        border: 1px solid #8D6E63 !important;
+    }
+
+    .dragon-year .text-indigo-600,
+    .dragon-year .text-blue-600,
+    .dragon-year .dark\:text-indigo-400 {
+        color: #B71C1C !important; 
+    }
+    
+    .dragon-year .bg-gradient-to-r.from-blue-500.to-teal-400 {
+        background-image: linear-gradient(to right, #B71C1C, #FFD700) !important;
+        border: 1px solid #B71C1C !important;
+        color: #FFF !important;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .dragon-year .border-slate-200,
+    .dragon-year .border-slate-300,
+    .dragon-year .dark\:border-slate-700 {
+        border-color: #D7CCC8 !important;
+    }
+
+    .dragon-year .text-green-600, .dragon-year .text-emerald-600 {
+        color: #2E7D32 !important; 
+    }
+    .dragon-year .bg-green-100, .dragon-year .bg-emerald-100 {
+        background-color: #E8F5E9 !important;
+        color: #1B5E20 !important;
+        border: 1px solid #A5D6A7 !important;
+    }
+
+    /* --- TEMA 1: MARÉ DO AMANHECER (Morning Tide) --- */
+    .morning-tide body, .morning-tide #root {
+        background-color: #F7F9FB !important; 
+        color: #23527A !important; 
+    }
+
+    .morning-tide aside, .morning-tide .bg-blue-950 {
+        background-color: #23527A !important; 
+        border-right: 1px solid #AFCBEF !important;
+    }
+    
+    .morning-tide aside .text-slate-200,
+    .morning-tide aside .text-slate-300,
+    .morning-tide aside button {
+        color: #F7F9FB !important;
+    }
+
+    .morning-tide .bg-blue-800 { 
+        background-color: #AFCBEF !important; 
+        color: #23527A !important; 
+        font-weight: bold;
+    }
+
+    .morning-tide header {
+        background-color: #FFFFFF !important;
+        border-bottom: 1px solid #AFCBEF !important;
+    }
+    
+    .morning-tide header h1 {
+        color: #23527A !important;
+    }
+
+    .morning-tide .bg-white, .morning-tide .dark\:bg-slate-800 {
+        background-color: #FFFFFF !important;
+        border: 1px solid #AFCBEF !important;
+        box-shadow: 0 2px 4px rgba(35, 82, 122, 0.1) !important;
+        color: #23527A !important;
+    }
+
+    .morning-tide .bg-indigo-600, .morning-tide .bg-blue-600, .morning-tide .dark\:bg-indigo-600 {
+        background-color: #FF8F7A !important; 
+        color: #FFFFFF !important;
+        border: none !important;
+    }
+    .morning-tide .bg-indigo-600:hover {
+        background-color: #e07e6b !important;
+    }
+
+    .morning-tide .text-slate-500, .morning-tide .text-slate-600, .morning-tide .text-gray-500 {
+        color: #5A7A9A !important; 
+    }
+    .morning-tide .text-slate-800, .morning-tide .text-slate-900 {
+        color: #23527A !important;
+    }
+
+    /* --- TEMA 3: AKEBONO (Japanese Dawn) -> アケボノ (Sakura Sky) --- */
+    .akebono-dawn body, .akebono-dawn #root {
+        background-color: #FEF4F8 !important; /* Very light pink */
+        color: #5D4037 !important; /* Branch Brown */
+    }
+
+    .akebono-dawn aside, .akebono-dawn .bg-blue-950 {
+        background-color: #F8C3CD !important; /* Soft Sakura Pink */
+        border-right: 1px solid #F48FB1 !important;
+    }
+    
+    .akebono-dawn aside .text-slate-200, 
+    .akebono-dawn aside .text-slate-300,
+    .akebono-dawn aside button {
+        color: #4E342E !important; /* Dark Brown text on pink sidebar */
+    }
+
+    /* Active Item in Sidebar */
+    .akebono-dawn .bg-blue-800 {
+        background-color: #FFFFFF !important;
+        color: #D81B60 !important; /* Deep Pink */
+        border-left: 4px solid #42A5F5 !important; /* Sky Blue accent */
+        font-weight: bold;
+    }
+
+    .akebono-dawn header {
+        background-color: #FFFFFF !important;
+        border-bottom: 1px solid #F8C3CD !important;
+    }
+    .akebono-dawn header h1 {
+        color: #D81B60 !important; 
+    }
+
+    /* Cards */
+    .akebono-dawn .bg-white, .akebono-dawn .dark\:bg-slate-800 {
+        background-color: #FFFFFF !important;
+        border: 1px solid #FCE4EC !important; 
+        box-shadow: 0 4px 15px rgba(244, 143, 177, 0.15) !important; /* Pink shadow */
+        color: #5D4037 !important;
+    }
+
+    /* Primary Buttons: Sky Blue (The sky behind the flowers) */
+    .akebono-dawn .bg-indigo-600, .akebono-dawn .bg-blue-600 {
+        background-color: #42A5F5 !important; /* Sky Blue */
+        color: #FFFFFF !important;
+        border: none !important;
+        font-weight: 600;
+    }
+    .akebono-dawn .bg-indigo-600:hover {
+        background-color: #1E88E5 !important;
+    }
+    
+    .akebono-dawn .hc-button-primary-override {
+        background-color: #42A5F5 !important; 
+        color: #FFFFFF !important;
+    }
+
+    .akebono-dawn .text-slate-500, .akebono-dawn .text-gray-500 {
+        color: #8D6E63 !important; /* Lighter brown */
+    }
+    
+    .akebono-dawn .text-slate-900, .akebono-dawn .text-slate-800 {
+        color: #5D4037 !important;
+    }
+
+    /* --- Itoshi Sae Theme (Genius) --- */
+    .itoshi-sae body, .itoshi-sae #root, .itoshi-sae .bg-slate-100, .itoshi-sae .dark\:bg-slate-900 {
+        background-color: #080808 !important; /* Void Black */
+        color: #e0e0e0 !important;
+    }
+
+    .itoshi-sae h1, .itoshi-sae h2, .itoshi-sae h3 {
+        color: #ffffff !important;
+        letter-spacing: -0.02em;
+    }
+
+    .itoshi-sae aside, .itoshi-sae .bg-blue-950 {
+        background-color: #050505 !important;
+        border-right: 1px solid #4fd1c5 !important; /* Teal Border (The Vision) */
+    }
+
+    .itoshi-sae aside .text-slate-200, 
+    .itoshi-sae aside .text-slate-300,
+    .itoshi-sae aside button {
+        color: #a0a0a0 !important;
+        transition: all 0.2s ease;
+    }
+
+    /* Sidebar Active Item - The "Ego" State */
+    .itoshi-sae .bg-blue-800 {
+        background: linear-gradient(90deg, #2a0a0a 0%, #050505 100%) !important;
+        color: #4fd1c5 !important; /* Teal Text */
+        border-left: 4px solid #620000 !important; /* Deep Maroon Accent */
+        font-weight: bold;
+        box-shadow: inset 10px 0 20px -10px rgba(98, 0, 0, 0.5);
+    }
+
+    .itoshi-sae header {
+        background-color: #080808 !important;
+        border-bottom: 1px solid #1f2833 !important;
+    }
+
+    .itoshi-sae .bg-white, .itoshi-sae .dark\:bg-slate-800 {
+        background-color: #121212 !important; /* Gunmetal */
+        border: 1px solid #1f1f1f !important;
+        border-radius: 4px !important; /* Sharp edges */
+        color: #e0e0e0 !important;
+    }
+
+    /* Primary Buttons - Calculated Destruction */
+    .itoshi-sae .bg-indigo-600, .itoshi-sae .bg-blue-600, .itoshi-sae .hc-button-primary-override {
+        background: linear-gradient(135deg, #620000 0%, #4a0000 100%) !important; /* Maroon Gradient */
+        color: #ffffff !important;
+        border: 1px solid #800000 !important;
+        border-radius: 2px !important; /* Very sharp */
+        position: relative;
+        overflow: hidden;
+    }
+
+    .itoshi-sae .bg-indigo-600:hover {
+        border-color: #4fd1c5 !important; /* Teal glow on hover */
+        box-shadow: 0 0 15px rgba(79, 209, 197, 0.3) !important;
+    }
+
+    /* Secondary/Success Actions - The "Pass" */
+    .itoshi-sae .bg-green-600 {
+        background-color: transparent !important;
+        border: 1px solid #4fd1c5 !important;
+        color: #4fd1c5 !important;
+        box-shadow: 0 0 5px rgba(79, 209, 197, 0.2);
+    }
+
+    .itoshi-sae input, .itoshi-sae select, .itoshi-sae textarea {
+        background-color: #0a0a0a !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+        border-radius: 2px !important;
+    }
+    
+    .itoshi-sae input:focus, .itoshi-sae select:focus {
+        border-color: #4fd1c5 !important; /* Teal focus */
+        box-shadow: 0 0 0 1px #4fd1c5 !important;
+    }
+
+    .itoshi-sae .text-slate-500, .itoshi-sae .text-slate-600, .itoshi-sae .text-gray-500 {
+        color: #888 !important;
+    }
+
+    .itoshi-sae .text-slate-900, .itoshi-sae .text-slate-800 {
+        color: #fff !important;
+    }
+
+    /* --- Sorcerer Supreme (Satoru Gojo) -> Muryōkūsho --- */
+    .sorcerer-supreme body, .sorcerer-supreme #root, .sorcerer-supreme .bg-slate-100, .sorcerer-supreme .dark\:bg-slate-900 {
+        background-color: #020617 !important; /* Deepest Void Blue */
+        color: #f8fafc !important;
+    }
+
+    /* Sidebar: The Void with Six Eyes Accent */
+    .sorcerer-supreme aside, .sorcerer-supreme .bg-blue-950 {
+        background-color: #050505 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .sorcerer-supreme aside .text-slate-200, 
+    .sorcerer-supreme aside .text-slate-300, 
+    .sorcerer-supreme aside button {
+        color: #cbd5e1 !important;
+    }
+
+    /* Active Sidebar Item: The "Look" (White Gradient + Cyan Accent) */
+    .sorcerer-supreme .bg-blue-800 {
+        background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(14, 165, 233, 0.1) 100%) !important;
+        border-left: 4px solid #FFFFFF !important; /* White Hair Reference */
+        color: #FFFFFF !important;
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .sorcerer-supreme header {
+        background-color: #020617 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px);
+    }
+
+    .sorcerer-supreme header h1 {
+        color: #FFFFFF !important;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Cards: The Limitless Barrier (Glassmorphism with White Borders) */
+    .sorcerer-supreme .bg-white, .sorcerer-supreme .dark\:bg-slate-800 {
+        background-color: rgba(15, 23, 42, 0.7) !important; /* Slate 900 with opacity */
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #f8fafc !important;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.05); /* Subtle white glow */
+    }
+
+    /* Inputs: Dark & Sleek */
+    .sorcerer-supreme input, .sorcerer-supreme select, .sorcerer-supreme textarea {
+        background-color: #0f172a !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+    }
+    
+    .sorcerer-supreme input:focus, .sorcerer-supreme select:focus, .sorcerer-supreme textarea:focus {
+        border-color: #0ea5e9 !important;
+        box-shadow: 0 0 0 1px #0ea5e9, 0 0 15px rgba(14, 165, 233, 0.4) !important;
+    }
+
+    /* Primary Buttons: Hollow Purple (Red + Blue) with White Shine */
+    .sorcerer-supreme .bg-indigo-600, 
+    .sorcerer-supreme .bg-blue-600, 
+    .sorcerer-supreme .hc-button-primary-override {
+        background: linear-gradient(135deg, #00BFFF 0%, #8A2BE2 100%) !important; /* Deep Sky Blue to Blue Violet */
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+        font-weight: 700 !important;
+        text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        transition: all 0.3s ease;
+    }
+
+    .sorcerer-supreme .bg-indigo-600:hover {
+        box-shadow: 0 0 25px rgba(138, 43, 226, 0.8) !important; /* Stronger Purple Glow */
+        transform: translateY(-1px);
+        border-color: #fff !important;
+    }
+
+    /* Module Tags Fix */
+    .sorcerer-supreme .bg-indigo-50, 
+    .sorcerer-supreme .bg-blue-50,
+    .sorcerer-supreme .bg-slate-100,
+    .sorcerer-supreme .bg-slate-200 {
+        background-color: rgba(56, 189, 248, 0.1) !important; /* Transparent Cyan */
+        border: 1px solid rgba(139, 92, 246, 0.3) !important; /* Purple Border */
+        color: #38bdf8 !important; /* Cyan Text */
+    }
+
+    /* Achievements Fix */
+    .sorcerer-supreme .bg-gradient-to-br.from-yellow-50 {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .sorcerer-supreme .text-yellow-600, 
+    .sorcerer-supreme .text-slate-800 {
+        color: #ffffff !important;
+    }
+    
+    .sorcerer-supreme .bg-green-50 {
+        background-color: rgba(16, 185, 129, 0.1) !important;
+        border: 1px solid rgba(16, 185, 129, 0.3) !important;
+        color: #34d399 !important;
+    }
+
+    /* Classes Page Fixes */
+    .sorcerer-supreme .bg-white {
+        background-color: rgba(15, 23, 42, 0.7) !important;
+        border-color: rgba(255,255,255,0.1) !important;
+    }
+    
+    .sorcerer-supreme .bg-slate-50, 
+    .sorcerer-supreme .hover\:bg-slate-50:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+
+    /* Text Colors */
+    .sorcerer-supreme .text-slate-900, .sorcerer-supreme .text-slate-800 {
+        color: #ffffff !important;
+        text-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+    .sorcerer-supreme .text-slate-500, .sorcerer-supreme .text-slate-600, .sorcerer-supreme .text-gray-500 {
+        color: #cbd5e1 !important;
+    }
+    
+    /* Link/Accent Text */
+    .sorcerer-supreme .text-indigo-600, .sorcerer-supreme .dark\:text-indigo-400 {
+        color: #38bdf8 !important; /* Sky Blue */
+        text-shadow: 0 0 5px rgba(56, 189, 248, 0.4);
+    }
+
+    /* CUSTOM MENU BUTTON: The Die/Cube (Gokumonkyō) */
+    .sorcerer-supreme button[aria-label="Abrir menu"] {
+        background-color: #d4d4d8 !important; /* Zinc 300 - Bone Texture */
+        border-radius: 4px !important; /* Sharp corners like a cube */
+        border: 1px solid #a1a1aa !important; /* Darker bone border */
+        width: 48px !important;
+        height: 48px !important;
+        box-shadow: 
+            inset 2px 2px 5px rgba(255,255,255,0.5),
+            inset -2px -2px 5px rgba(0,0,0,0.2),
+            0 0 15px rgba(56, 189, 248, 0.2) !important; /* Subtle Cyan Aura */
+        color: transparent !important; /* Hide default SVG */
+        position: fixed;
+        /* Reset Flex */
+        display: block !important;
+    }
+
+    /* The 6 Dots Face (Pseudo-element) */
+    .sorcerer-supreme button[aria-label="Abrir menu"]::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        /* 6 dots */
+        background-image: 
+            radial-gradient(circle, #2563eb 40%, transparent 45%),
+            radial-gradient(circle, #2563eb 40%, transparent 45%),
+            radial-gradient(circle, #2563eb 40%, transparent 45%),
+            radial-gradient(circle, #2563eb 40%, transparent 45%),
+            radial-gradient(circle, #2563eb 40%, transparent 45%),
+            radial-gradient(circle, #2563eb 40%, transparent 45%);
+        background-size: 12px 12px; /* Size of the grid cell for each dot */
+        background-position: 
+            8px 6px,   28px 6px,   /* Top Row */
+            8px 18px,  28px 18px,  /* Mid Row */
+            8px 30px,  28px 30px;  /* Bot Row */
+        background-repeat: no-repeat;
+        filter: drop-shadow(0 0 2px #3b82f6); /* Glow */
+        animation: pulse-dots 3s infinite alternate;
+    }
+    
+    /* Remove the old seam lines */
+    .sorcerer-supreme button[aria-label="Abrir menu"]::before {
+        display: none;
+    }
+
+    @keyframes pulse-dots {
+        0% { filter: drop-shadow(0 0 1px #0ea5e9); }
+        100% { filter: drop-shadow(0 0 4px #0ea5e9); }
+    }
+
+    /* --- Midnight Theme (Modern Monochromatic SaaS) --- */
+    .midnight body, .midnight #root, .midnight .bg-slate-100, .midnight .dark\:bg-slate-900 {
+        background-color: #09090b !important; /* Zinc 950 */
+        color: #fafafa !important; /* Zinc 50 */
+    }
+
+    .midnight h1, .midnight h2, .midnight h3, .midnight header h1, .midnight aside {
+        font-family: 'Space Grotesk', sans-serif !important;
+        letter-spacing: -0.02em; /* Tight tracking for technical feel */
+    }
+
+    /* Sidebar: Seamless with content */
+    .midnight aside, .midnight .bg-blue-950 {
+        background-color: #09090b !important;
+        border-right: 1px solid #27272a !important; /* Zinc 800 */
+    }
+
+    .midnight aside .text-slate-200, 
+    .midnight aside .text-slate-300,
+    .midnight aside button {
+        color: #a1a1aa !important; /* Zinc 400 */
+    }
+    
+    .midnight aside button:hover {
+        color: #ffffff !important;
+        background-color: #18181b !important; /* Zinc 900 */
+    }
+
+    /* Active Sidebar Item - The "Inverted Pill" */
+    .midnight .bg-blue-800 {
+        background-color: #ffffff !important; /* Pure White */
+        color: #09090b !important; /* Deep Black text */
+        border: none !important;
+        font-weight: 700;
+        box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    .midnight header {
+        background-color: #09090b !important;
+        border-bottom: 1px solid #27272a !important;
+    }
+
+    /* Cards: Flat Modern Surface */
+    .midnight .bg-white, .midnight .dark\:bg-slate-800 {
+        background-color: #09090b !important; /* Transparent/Black */
+        border: 1px solid #27272a !important; /* Zinc 800 */
+        color: #fafafa !important;
+        box-shadow: none !important;
+        transition: border-color 0.2s ease;
+    }
+    
+    .midnight .bg-white:hover, .midnight .dark\:bg-slate-800:hover {
+        border-color: #52525b !important; /* Zinc 600 on hover */
+    }
+
+    /* Inputs: Structural & Clean */
+    .midnight input, .midnight select, .midnight textarea {
+        background-color: #18181b !important; /* Zinc 900 */
+        border: 1px solid #27272a !important;
+        color: #ffffff !important;
+        border-radius: 6px !important;
+        transition: border-color 0.2s;
+    }
+    
+    .midnight input:focus, .midnight select:focus, .midnight textarea:focus {
+        border-color: #ffffff !important; /* White border on focus */
+        ring: 0 !important;
+        outline: none !important;
+    }
+
+    /* Primary Buttons: High Contrast White */
+    .midnight .bg-indigo-600, 
+    .midnight .bg-blue-600,
+    .midnight .bg-green-600, 
+    .midnight .hc-button-primary-override {
+        background-color: #ffffff !important;
+        background-image: none !important;
+        color: #000000 !important;
+        border: 1px solid #ffffff !important;
+        font-weight: 600 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        transition: all 0.2s ease;
+    }
+
+    .midnight .bg-indigo-600:hover,
+    .midnight .bg-green-600:hover {
+        background-color: #d4d4d8 !important; /* Zinc 300 hover */
+        border-color: #d4d4d8 !important;
+        transform: translateY(-1px);
+    }
+
+    /* Secondary Buttons: Outline */
+    .midnight .bg-slate-100, .midnight .bg-white {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: 1px solid #3f3f46 !important; /* Zinc 700 */
+    }
+    .midnight .bg-slate-100:hover {
+        border-color: #ffffff !important;
+    }
+
+    /* Text Colors */
+    .midnight .text-slate-900, .midnight .text-slate-800, .midnight .text-gray-900 {
+        color: #ffffff !important;
+    }
+    .midnight .text-slate-500, .midnight .text-slate-600, .midnight .text-gray-500 {
+        color: #a1a1aa !important; /* Zinc 400 */
+    }
+    
+    /* Link/Accent Text */
+    .midnight .text-indigo-600, .midnight .dark\:text-indigo-400 {
+        color: #ffffff !important;
+        text-decoration: underline;
+        text-decoration-color: #525252;
+        text-underline-offset: 4px;
+    }
+    
+    /* Tags & Badges */
+    .midnight .bg-indigo-50, .midnight .bg-blue-50 {
+        background-color: #18181b !important;
+        color: #ffffff !important;
+        border: 1px solid #3f3f46 !important;
+    }
+
+</style>
+</head>
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>

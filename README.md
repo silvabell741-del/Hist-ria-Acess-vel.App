@@ -1,11 +1,10 @@
-<div align="center">
+# História Acessível – Firebase App
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Este projeto está em reorganização.  
+A documentação será reescrita após finalizar a nova arquitetura baseada em:
 
-  <h1>Built with AI Studio</h2>
+- Firebase Authentication  
+- Firestore (classes, teacher_history, activities, modules, notifications)  
+- Cloud Storage  
 
-  <p>The fastest path from prompt to production with Gemini.</p>
-
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+Por enquanto, este README está intencionalmente vazio para evitar confusão com estruturas antigas.
