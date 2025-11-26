@@ -105,14 +105,40 @@ export default defineConfig({
   background_color: '#0f172a',
   display: 'standalone',
   display_override: ['standalone', 'minimal-ui'],
+  orientation: 'portrait-primary',
   scope: '/',
   start_url: '/',
   id: '/',
   categories: ['education', 'productivity', 'reference'],
   lang: 'pt-BR',
   dir: 'ltr',
-  prefer_related_applications: false,
-}
+  prefer_related_applications: false, // <-- vírgula aqui
+
+  launch_handler: {
+    client_mode: 'navigate-existing'
+  },
+
+  icons: [
+    {
+      src: 'pwa-192x192.png',
+      sizes: '192x192',
+      type: 'image/png',
+      purpose: 'any'
+    },
+    {
+      src: 'pwa-512x512.png',
+      sizes: '512x512',
+      type: 'image/png',
+      purpose: 'any'
+    },
+    {
+      src: 'pwa-512x512.png',
+      sizes: '512x512',
+      type: 'image/png',
+      purpose: 'maskable'
+    }
+  ]
+      }
         // launch_handler: Impede múltiplas instâncias do app abertas
         launch_handler: {
             client_mode: "navigate-existing"
