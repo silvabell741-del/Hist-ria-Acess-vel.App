@@ -107,9 +107,9 @@ export default defineConfig({
         // display_override: Garante fallback elegante se standalone não for suportado
         display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
         orientation: 'any',
-        scope: 'https://f8c5fd57.hist-ria-acess-vel-app.pages.dev/',
-        start_url: 'https://f8c5fd57.hist-ria-acess-vel-app.pages.dev/',
-        id: 'https://f8c5fd57.hist-ria-acess-vel-app.pages.dev/',
+        scope: 'https://hist-ria-acess-vel-app.pages.dev/',
+        start_url: 'https://hist-ria-acess-vel-app.pages.dev/',
+        id: 'https://hist-ria-acess-vel-app.pages.dev/',
         categories: ['education', 'productivity', 'reference'],
         lang: 'pt-BR',
         dir: 'ltr',
