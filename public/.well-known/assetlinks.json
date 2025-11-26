@@ -1,1 +1,8 @@
-
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "dev.pages.hist_ria_acess_vel_app.twa",
+        "sha256_cert_fingerprints": ["85:B8:1E:67:0C:D0:5E:D5:D5:4C:4D:9B:D3:67:85:BD:43:4E:CB:0B:13:F1:1B:55:F7:C5:34:93:F1:A7:A6:A5"]
+      }
+    }]
